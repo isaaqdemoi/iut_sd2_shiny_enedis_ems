@@ -13,3 +13,7 @@ dpe_v2_logement_neuf = read.csv(file = "dpe-v2-logements-neufs.csv", header = TR
 
 dim(dpe_v2_logement_existant)
 dim(dpe_v2_logement_neuf)
+
+
+
+Changement Commit
