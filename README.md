@@ -2,7 +2,7 @@
 
 <br> <br>
 
-Il y'a plusieurs dossier ici : 
+Il y'a plusieurs dossier ici : ils contiennent les scripts **commentés**
 
 <br> <br>
 
