@@ -1,0 +1,186 @@
+---
+title: "Analyse des performances énergétiques des logements dans le Rhône (69) :"
+author: "Isaaq & Oussama"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+# Sommaire :
+
+**1) Introduction**
+
+a) Contexte et objectifs du rapport.  
+
+
+b) Présentation des données (réception DPE, numéro DPE, code postal, étiquette DPE, score des logements).
+
+<br><br>
+
+**2) Répartition géographique des logements**
+
+
+a) Analyse de la distribution des logements par code postal dans le département du Rhône.
+
+<br><br>
+
+**3) Analyse des étiquettes DPE**
+
+
+a) Répartition des logements selon les différentes étiquettes DPE (de A à G).  
+
+
+b) Identification des zones avec un score énergétique moyen ou élevé.
+
+<br><br>
+
+**4) Conclusion**
+
+a) Perspectives pour de futures études et améliorations dans la gestion des logements du Rhône.
+
+\newpage 
+
+# Introduction :
+
+### Contexte & Objectif :
+
+Le Diagnostic de Performance Énergétique (DPE) est essentiel dans la lutte contre le changement climatique et la transition énergétique en France. Il permet d’évaluer la consommation d’énergie et les émissions de gaz à effet de serre des logements, en attribuant à chaque bien une étiquette énergétique allant de A (logement très performant) à G.
+Cela joue un rôle central dans les politiques de rénovation énergétique. De plus, il peut contribuer à la valorisation des biens immobiliers.  
+Dans ce rapport, le département du Rhône (69) présente une diversité de logements, avec des performances énergétiques variées, influencées par divers facteurs (géographique et autres).
+
+<br>
+
+Ce rapport vise à analyser les performances énergétiques des logements du département du Rhône (69) en se basant sur les données issues du site : "https://data.ademe.fr/".
+
+Les objectifs principaux sont :
+
+1. **Évaluer la répartition géographique** des DPE dans le département, afin d’identifier les zones à forte et faible concentration de diagnostics.
+2. **Analyser la répartition des étiquettes DPE** afin de comprendre les tendances de consommation énergétique par zone et les différences de performance entre les logements.
+
+3. **Identifier les zones à améliorer**, avec une focalisation sur les logements ayant des scores énergétiques faibles (étiquettes F et G).
+
+<br><br>
+
+### Présentation des données :
+
+Dans ce rapport, nous allons analyser cinq variables principales :
+
+- **Date de réception du DPE** : correspond au jour où le logement a obtenu son diagnostic de performance énergétique (DPE).
+
+- **Numéro DPE** : identifiant unique attribué à chaque DPE, propre à un logement spécifique.
+
+- **Code postal** : indique la localisation géographique du logement via son code postal.
+
+- **Étiquette DPE** : classe énergétique attribuée au logement, allant de A (très performant) à G.
+
+- **Score énergétique** : mesure quantitative de la performance énergétique du logement.
+
+
+# Répartition géographique des logements :
+
+### **Analyse de la distribution des logements par code postal dans le département du Rhône 
+
+<br><br>
+
+Pour étudier la répartition des logements par code postal dans le département du Rhône (69), nous allons établir un TOP 5 afin d'identifier les zones de forte concentration de population.
+
+Dans le graphique ci-dessous, nous pouvons remarquer que le département le plus "peuplé" est le 69100 avec environ 19000 logements entre 2020 et 2024.
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(dplyr)
+library(ggplot2)
+library(readr)
+logements_69=read.csv("logements_69.csv",header = TRUE, sep = ";", dec = ".")
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+distribution_logements=logements_69 %>% group_by(Code_postal_.BAN.) %>% summarise(n_logements = n(), .groups = 'drop') %>% arrange(desc(n_logements))
+top5=head(distribution_logements,5)
+flop5=head(distribution_logements,5)
+```
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(top5, aes(x=reorder(Code_postal_.BAN.,n_logements),y= n_logements)) +
+  geom_bar(stat="identity", fill="steelblue") +
+  labs(title="Top 5 des codes postaux avec le plus de logements",
+       x="Code Postal",
+       y="Nombre de logements") + coord_flip()
+```
+
+<br><br>
+
+Parmi ces cinq codes postaux, le nombre de logements varie entre 13 500 et 19 000, représentant une part significative de la population du Rhône. On peut donc conclure que cette zone géographique est particulièrement densément habitée.
+
+
+
+
+
+\newpage 
+
+# Analyse des étiquettes DPE :
+
+
+###  **Identification des zones avec un effectif d'étiquettes DPE "G" élevé.
+
+<br><br>
+
+Il est crucial d'identifier les départements ayant le plus grand nombre de logements classés "G" afin de mettre en œuvre des mesures pour remédier à cette situation.
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+logements_G=logements_69 %>%
+  filter(Etiquette_DPE=="G") %>%
+  group_by(Code_postal_.BAN.) %>% summarise(n_logements_G = n(), .groups = 'drop') %>% arrange(desc(n_logements_G))
+
+top5_G=head(logements_G,5)
+```
+
+```{r top5_G_graph,echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(top5_G, aes(x=reorder(Code_postal_.BAN.,n_logements_G),y= n_logements_G)) +
+  geom_bar(stat="identity", fill="orange") +
+  labs(title="Top 5 des CP avec le plus de logements 'G'",
+       x="Code Postal",
+       y="Nombre de logements") + coord_flip()
+```
+
+Il y'a une certaine corrélation entre les codes postaux les plus peuplés et les codes postaux avec le plus de logements "G". 
+
+<br><br>
+
+
+\newpage
+
+
+# résumé des principales statistiques concernant les logements :
+
+###  **nombre total de logements, la moyenne du score énergétique, et la répartition des étiquettes DPE.
+
+<br><br>
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(knitr)
+
+
+resume_top5 <- logements_69 %>%
+  filter(Code_postal_.BAN. %in% top5$Code_postal_.BAN.) %>%
+  group_by(Code_postal_.BAN.) %>%
+  summarise(
+    n_logements = n(),
+    score_moyen = mean(X_score, na.rm = TRUE),  # Moyenne du score énergétique
+    n_A = sum(Etiquette_DPE == "A"),
+    n_B = sum(Etiquette_DPE == "B"),
+    n_C = sum(Etiquette_DPE == "C"),
+    n_D = sum(Etiquette_DPE == "D"),
+    n_E = sum(Etiquette_DPE == "E"),
+    n_F = sum(Etiquette_DPE == "F"),
+    n_G = sum(Etiquette_DPE == "G"),
+    .groups = 'drop'
+  )
+
+kable(resume_top5, caption = "Résumé des performances énergétiques pour les TOP 5 codes postaux")
+
+```
+
+
+# Conclusion :
+
+L'analyse des performances énergétiques des logements est devenue un enjeu important dans le contexte de la transition écologique. Les DPE offrent un aperçu précieux mais ne suffisent pas à eux seuls. Pour aller au-delà des chiffres, il est nécessaire de plonger dans des analyses plus nuancées et de prendre en compte des facteurs tels que les caractéristiques démographiques, les types de logements et les spécificités géographiques. En adoptant une approche globale, nous pourrons mieux cibler nos efforts pour améliorer l'efficacité énergétique et construire un avenir durable pour le département du Rhône et ses habitants.

@@ -1,0 +1,67 @@
+
+#Recupération des CP:
+getwd()
+adresses69=read.csv(file = "adresses-69.csv", header = TRUE, sep = ";", dec = ".")
+cp=unique(adresses69$code_postal)
+print(cp)
+
+
+
+
+
+install.packages(c("httr", "jsonlite"))
+library(httr)
+library(jsonlite)
+
+df_logements <- data.frame()
+
+for (i in cp) {
+base_url <- "https://data.ademe.fr/data-fair/api/v1/datasets/dpe-v2-logements-existants/lines"
+#Récupération initiale (2021-2024)
+params <- list(
+page = 1,
+size = 10,
+select = "Identifiant__BAN,N°DPE,Code_postal_(BAN),Etiquette_DPE,Date_réception_DPE",
+q = i,
+q_fields = "Code_postal_(BAN)",
+qs = "Date_réception_DPE:[2021-01-01 TO 2024-09-01]"
+  )
+
+#Encodage des paramètres
+url_encoded <- modify_url(base_url, query = params)
+response <- GET(url_encoded)
+#Afficher le statut de la réponse
+print(status_code(response))
+content=fromJSON(rawToChar(response$content), flatten = FALSE)
+print(content$total)
+  
+#Si le total dépasse 10 000, découper la récupération en deux périodes
+if (content$total > 10000) {
+#Année 1 : [2021-2022]
+params$qs <- "Date_réception_DPE:[2021-01-01 TO 2022-12-31]"
+url_encoded <- modify_url(base_url, query = params)
+response <- GET(url_encoded)
+content <- fromJSON(rawToChar(response$content), flatten = FALSE)
+df_logements <- rbind(df_logements, content$result)
+    
+
+#Année 2 : [2023-2024]
+params$qs <- "Date_réception_DPE:[2023-01-01 TO 2024-09-01]"
+url_encoded <- modify_url(base_url, query = params)
+response <- GET(url_encoded)
+content <- fromJSON(rawToChar(response$content), flatten = FALSE)
+df_logements <- rbind(df_logements, content$result)
+  } 
+  else {
+    # Si moins de 10 000, récupérer tout en une seule fois
+    df_logements=rbind(df_logements, content$result)
+  }
+}
+
+colnames(adresses69)
+adresses_69_subset=adresses69[, c("id", "x", "y", "lat", "lon")]
+df_logements <- merge(df_logements, adresses_69_subset, by.x = "Identifiant__BAN", by.y = "id", all.x = TRUE)
+
+
+
+write.table(x = df_logements, file = "logements_69.csv",row.names = FALSE, sep = ";",dec = ".",fileEncoding = "UTF-8")
