@@ -21,8 +21,8 @@ Il y'a plusieurs fichier ici : ils contiennent les scripts **commentés** , le f
 
 <br> <br> 
 
-2 - 'Rmarkdown' : Contient le script qui à servi à faire le rapport d'étude.
+2 - 'Entrainement-1' : Contient le script qui à servi à faire le rapport d'étude.
 
 <br><br>
 
-3 - 'RSHINY' : Contient le script qui à servi à faire l'application déployée sur Internet
+3 - 'APPRSHINY' : Contient le script qui à servi à faire l'application déployée sur Internet
