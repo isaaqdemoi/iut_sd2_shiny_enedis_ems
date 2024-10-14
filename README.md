@@ -26,3 +26,7 @@ Il y'a plusieurs fichier ici : ils contiennent les scripts **commentés** , le f
 <br><br>
 
 3 - 'APPRSHINY' : Contient le script qui à servi à faire l'application déployée sur Internet
+
+<br><br>
+
+4 - 'logements_69' : Contient les données stockées et utilisées pour le projet
