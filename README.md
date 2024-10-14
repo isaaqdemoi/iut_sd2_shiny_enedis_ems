@@ -2,7 +2,8 @@
 
 <br> <br>
 
-Il y'a plusieurs dossier ici : ils contiennent les scripts **commentés**
+Il y'a plusieurs fichier ici : ils contiennent les scripts **commentés** , le fichier csv qui nous sert de base de données , de la doc et une vidéo démonstration de l'application.
+
 
 <br> <br>
 
